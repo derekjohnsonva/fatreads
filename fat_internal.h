@@ -1,5 +1,6 @@
 #ifndef FAT_INTERNAL_H_
 #define FAT_INTERNAL_H_
+#include <fstream>
 #include "fat.h"
 
 /*
@@ -40,4 +41,20 @@ struct __attribute__((packed)) Fat32BPB {
     uint8_t BS_FileSysTye[8];       // FAT12, FAT16 etc
 };
 
+// globals used
+std::ifstream infile;
+
+Fat32BPB *fatbpb;
+uint32_t cluster_size;
+uint32_t root_dir_sectors;
+uint32_t first_data_sector;
+uint32_t first_fat_sector;
+uint32_t data_sec;
+uint32_t count_of_clusters; // Number of clusters on the disk
+uint32_t root_cluster_32;   // the root cluster on a 32 byte FAT
+uint32_t dir_entry_size;    // size of a directory entry in bytes
+
+uint32_t cur_dir_clust;     // The cluster # of the directory the user is currently inside of;
+
+uint32_t *fatTable;         // array of FAT indexes that can be indexed by the cluster num
 #endif
