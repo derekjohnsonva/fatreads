@@ -33,3 +33,4 @@
 
 # Exclude testing raws
 testing/*
+*.raw
