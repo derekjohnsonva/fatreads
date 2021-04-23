@@ -209,10 +209,18 @@ int fat_open(const std::string &path) {
 }
 
 bool fat_close(int fd) {
+    if(!infile.is_open()){  // check if a file is mounted
+        std::cerr << "no file has been mounted \n";
+        return -1;
+    }
     return false;
 }
 
 int fat_pread(int fd, void *buffer, int count, int offset) {
+    if(!infile.is_open()){  // check if a file is mounted
+        std::cerr << "no file has been mounted \n";
+        return -1;
+    }
     if(fd >= fdIndex) {
         std::cerr << "a file descriptor with this val has not been set\n";
         return -1;
@@ -236,9 +244,10 @@ int fat_pread(int fd, void *buffer, int count, int offset) {
     int updated_offset = offset % cluster_size;
     int count_copy = count;
     int temp_count;
-    for(int bytes_read = 0; bytes_read < offset + count; bytes_read += cluster_size){
+    int bytes_read = index_of_cluster * cluster_size;
+    for(; bytes_read < offset + count; bytes_read += cluster_size){
         int cur_cluster = cluster_nums.at(index_of_cluster);
-        // index_of_cluster++;
+        index_of_cluster++;
         uint32_t first_sector_of_cluster = ((cur_cluster - 2) * fatbpb->BPB_SecPerClus) + first_data_sector;
         infile.seekg(first_sector_of_cluster * fatbpb->BPB_BytsPerSec + updated_offset);
         if(updated_offset > 0){
