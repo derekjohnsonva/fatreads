@@ -64,6 +64,12 @@ enum DirEntryAttributes {
     LONG_NAME_MASK  = 0x3F,
 };
 
+struct FDEntry {
+    DirEntry dir;
+    bool isEmpty;
+    FDEntry(): isEmpty(true) {}
+};
+
 /* These are the functions you need to implement */
 extern bool fat_mount(const std::string &path);
 extern int fat_open(const std::string &path);

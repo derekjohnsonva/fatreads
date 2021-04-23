@@ -74,6 +74,17 @@ std::vector<int> get_clusters_from_fat(int cluster_num) {
     return cluster_nums;
 }
 
+int get_open_fdtable_index() {
+    int i = 0;
+    for (FDEntry e : fdTable) {
+        if(e.isEmpty){
+            return i;
+        }
+        i++;
+    }
+    return -1;
+}
+
 std::vector<DirEntry> read_cluster(int cluster_num) {
     std::vector<int> cluster_nums = get_clusters_from_fat(cluster_num);
     std::vector<DirEntry> dirEntries;
@@ -177,7 +188,8 @@ int fat_open(const std::string &path) {
         std::cerr << "trying to read a path that is not indexed from the root\n";
         return -1;
     }
-    if(fdIndex >= 128){
+    int fdIndex = get_open_fdtable_index();
+    if(fdIndex == -1){
         std::cerr << "out of space on the file descriptor table. Close a file before you open a new one";
         return -1;
     }
@@ -203,17 +215,22 @@ int fat_open(const std::string &path) {
         return -1;
     }
     // add next_dir to the fdTable
-    fdTable[fdIndex] = next_dir;
-    fdIndex++;
-    return fdIndex-1;
+    fdTable.at(fdIndex).dir = next_dir;
+    fdTable.at(fdIndex).isEmpty = false;
+    return fdIndex;
 }
 
 bool fat_close(int fd) {
     if(!infile.is_open()){  // check if a file is mounted
         std::cerr << "no file has been mounted \n";
-        return -1;
+        return false;
     }
-    return false;
+    if(fdTable.at(fd).isEmpty){
+        std::cerr << "this file directory entry has not been opened\n";
+        return false;
+    }
+    fdTable.at(fd).isEmpty = true;
+    return true;
 }
 
 int fat_pread(int fd, void *buffer, int count, int offset) {
@@ -221,12 +238,12 @@ int fat_pread(int fd, void *buffer, int count, int offset) {
         std::cerr << "no file has been mounted \n";
         return -1;
     }
-    if(fd >= fdIndex) {
+    if(fdTable.at(fd).isEmpty) {
         std::cerr << "a file descriptor with this val has not been set\n";
         return -1;
     }
     // get the directory from the file descriptor table
-    DirEntry dir = fdTable[fd];
+    DirEntry dir = fdTable.at(fd).dir;
     int dir_file_size = (int) dir.DIR_FileSize;
     // handle edge cases
     if(count == 0 || offset > dir_file_size){

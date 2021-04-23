@@ -58,6 +58,5 @@ uint32_t cur_dir_clust;     // The cluster # of the directory the user is curren
 //TODO: Make this a vector
 uint32_t *fatTable;         // array of FAT indexes that can be indexed by the cluster num
 
-DirEntry fdTable[128];      // array of file descriptors to be used with open, close, and read
-int fdIndex = 0;       // index of the current open spot in the fdTable
+std::vector<FDEntry> fdTable(128);      // array of file descriptors to be used with open, close, and read
 #endif
