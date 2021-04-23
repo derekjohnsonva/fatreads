@@ -36,3 +36,6 @@ testing/*
 *.raw
 fat_shell
 fat_test
+
+# dev
+.vscode/*
