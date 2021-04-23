@@ -823,9 +823,9 @@ void mounted_tests(void) {
     check_contents("/congrats.tXt", CONGRATS_TEXT);
     check_contents("/CONGRATS.TXT", CONGRATS_TEXT);
     check_contents("/example1.txt", "the contents of example1.\n");
-    // check_contents("/gamecopy.txt", THE_GAME_TEXT, false);
+    check_contents("/gamecopy.txt", THE_GAME_TEXT, false);
     check_contents("/gamecopy.txt", THE_GAME_TEXT);
-    // check_contents("/gamefrag.txt", THE_GAME_TEXT, false);
+    check_contents("/gamefrag.txt", THE_GAME_TEXT, false);
     check_contents("/gamefrag.txt", THE_GAME_TEXT);
     check_contents("/foo.a", "simple file\n");
     check_contents("/foo.ba", "simple file 2\n");

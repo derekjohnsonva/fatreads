@@ -264,18 +264,19 @@ int fat_pread(int fd, void *buffer, int count, int offset) {
     int bytes_read = 0;
     for(; bytes_read < count; bytes_read += temp_count){
         int cur_cluster = cluster_nums.at(index_of_cluster);
+        std::cout << "reading cluster #" << index_of_cluster <<"; bytes_read = " << bytes_read << "; offset = "<< updated_offset << "\n";
         index_of_cluster++;
         uint32_t first_sector_of_cluster = ((cur_cluster - 2) * fatbpb->BPB_SecPerClus) + first_data_sector;
         infile.seekg(first_sector_of_cluster * fatbpb->BPB_BytsPerSec + updated_offset);
-        if(updated_offset > 0){
-            updated_offset = 0;
-        }
-        if(count_copy > (int) cluster_size) {
-            temp_count = cluster_size;
-            count_copy -= cluster_size;
+        if(updated_offset + count_copy > (int) cluster_size) {
+            temp_count = cluster_size - updated_offset;
+            count_copy -= (cluster_size - updated_offset);
         } else {
             temp_count = count_copy;
             count_copy = 0;
+        }
+        if(updated_offset > 0){
+            updated_offset = 0;
         }
         if(!(infile.read( &(((char *) buffer)[bytes_read]), temp_count))){
             std::cerr << "could not read from memory";
