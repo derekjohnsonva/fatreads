@@ -34,3 +34,5 @@
 # Exclude testing raws
 testing/*
 *.raw
+fat_shell
+fat_test
