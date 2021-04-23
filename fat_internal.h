@@ -45,8 +45,8 @@ struct __attribute__((packed)) Fat32BPB {
 std::ifstream infile;
 
 Fat32BPB *fatbpb;
-uint32_t cluster_size;
-uint32_t root_dir_sectors;
+uint32_t cluster_size;      // bytes in a cluster
+uint32_t root_dir_sectors; // number of sectors in the root dir
 uint32_t first_data_sector;
 uint32_t first_fat_sector;
 uint32_t data_sec;
@@ -55,6 +55,9 @@ uint32_t root_cluster_32;   // the root cluster on a 32 byte FAT
 uint32_t dir_entry_size;    // size of a directory entry in bytes
 
 uint32_t cur_dir_clust;     // The cluster # of the directory the user is currently inside of;
-
+//TODO: Make this a vector
 uint32_t *fatTable;         // array of FAT indexes that can be indexed by the cluster num
+
+DirEntry fdTable[128];      // array of file descriptors to be used with open, close, and read
+int fdIndex = 0;       // index of the current open spot in the fdTable
 #endif
