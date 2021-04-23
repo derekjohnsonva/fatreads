@@ -244,8 +244,8 @@ int fat_pread(int fd, void *buffer, int count, int offset) {
     int updated_offset = offset % cluster_size;
     int count_copy = count;
     int temp_count;
-    int bytes_read = index_of_cluster * cluster_size;
-    for(; bytes_read < offset + count; bytes_read += cluster_size){
+    int bytes_read = 0;
+    for(; bytes_read < count; bytes_read += temp_count){
         int cur_cluster = cluster_nums.at(index_of_cluster);
         index_of_cluster++;
         uint32_t first_sector_of_cluster = ((cur_cluster - 2) * fatbpb->BPB_SecPerClus) + first_data_sector;
